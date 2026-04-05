@@ -1,0 +1,40 @@
+{
+    "id": "0aae82e2-8754-4e8f-a0b2-3d69f5f90c74",
+    "name": "ALProject365",
+    "publisher": "Default publisher",
+    "version": "1.0.0.4",
+
+    "brief": "",
+    "description": "",
+    "privacyStatement": "",
+    "EULA": "",
+    "help": "",
+    "url": "",
+    "logo": "",
+
+    "target": "OnPrem",
+
+    "platform": "21.0.0.0",
+    "application": "21.0.0.0",
+    "runtime": "10.0",
+
+    "dependencies": [],
+    "screenshots": [],
+
+    "idRanges": [
+        {
+            "from": 50100,
+            "to": 50549
+        }
+    ],
+
+    "resourceExposurePolicy": {
+        "allowDebugging": true,
+        "allowDownloadingSource": true,
+        "includeSourceInSymbolFile": true
+    },
+
+    "features": [
+        "NoImplicitWith"
+    ]
+}
