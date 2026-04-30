@@ -60,11 +60,14 @@ table 50200 Project
         NoSeriesMgt: Codeunit NoSeriesManagement;
 
     trigger OnInsert()
+    var
+        NoSeriesCode: Code[20];
     begin
         if "No." = '' then begin
             TimeRegSetup.Get();
             TimeRegSetup.TestField("Project Nos.");
-            NoSeriesMgt.InitSeries(TimeRegSetup."Project Nos.", xRec."No.", 0D, "No.", TimeRegSetup."Project Nos.");
+            NoSeriesCode := TimeRegSetup."Project Nos.";
+            NoSeriesMgt.InitSeries(TimeRegSetup."Project Nos.", xRec."No.", 0D, "No.", NoSeriesCode);
         end;
     end;
 
