@@ -4,6 +4,7 @@ page 50202 "Sales Order Processor"
     Caption = 'Sales Order Processor';
     ApplicationArea = All;
     UsageCategory = Documents;
+
     SourceTable = Item;
     SourceTableView = where("WooCommerce ID" = filter('>0'));
 
@@ -13,23 +14,31 @@ page 50202 "Sales Order Processor"
         {
             repeater(Lines)
             {
+                field(Picture; Rec.Picture)
+                {
+                    ApplicationArea = All;
+                }
+
                 field("No."; Rec."No.")
                 {
                     ApplicationArea = All;
+                    ToolTip = 'Item number';
                 }
+
                 field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
+                    ToolTip = 'Item description';
                 }
-                field("Sales Channel"; Rec."Sales Channel")
-                {
-                    ApplicationArea = All;
-                }
-                field(TotalSold; GetTotalSold(Rec."No."))
-                {
-                    ApplicationArea = All;
-                    Caption = 'Total Qty Sold';
-                }
+            }
+        }
+
+        area(FactBoxes)
+        {
+            part(SalesByProduct; "Sales By Product Chart")
+            {
+                ApplicationArea = All;
+                Caption = 'Sales by Product';
             }
         }
     }
@@ -45,7 +54,6 @@ page 50202 "Sales Order Processor"
                 Image = Item;
                 Promoted = true;
                 PromotedCategory = Process;
-                ToolTip = 'Open the Item Card for the selected product';
 
                 trigger OnAction()
                 var
@@ -57,14 +65,4 @@ page 50202 "Sales Order Processor"
             }
         }
     }
-
-    local procedure GetTotalSold(ItemNo: Code[20]): Decimal
-    var
-        SalesLine: Record "Sales Line";
-    begin
-        SalesLine.SetRange(Type, SalesLine.Type::Item);
-        SalesLine.SetRange("No.", ItemNo);
-        SalesLine.CalcSums(Quantity);
-        exit(SalesLine.Quantity);
-    end;
 }

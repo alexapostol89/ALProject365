@@ -9,6 +9,7 @@ codeunit 50200 "WooCommerce Management"
         SalesHeader."Sell-to Customer No." := CustomerNo;
         SalesHeader."External Document No." := CopyStr(WooOrderId, 1, MaxStrLen(SalesHeader."External Document No."));
         SalesHeader.Insert(true);
+        SendOrderConfirmation(SalesHeader."No.", WooOrderId);
         exit(SalesHeader."No.");
     end;
 
@@ -47,7 +48,7 @@ codeunit 50200 "WooCommerce Management"
         EmailBody += '<table><tr><th>Item No.</th><th>Description</th><th>Stock</th><th>Threshold</th></tr>';
 
         Item.Reset();
-        Item.SetRange("WooCommerce ID", 1, 999999); // only WooCommerce items
+        Item.SetRange("WooCommerce ID", 1, 999999);
         if Item.FindSet() then
             repeat
                 if Item.Inventory <= Setup."Low Stock Threshold" then begin
@@ -68,5 +69,46 @@ codeunit 50200 "WooCommerce Management"
                 true);
             Email.Send(EmailMessage);
         end;
+    end;
+
+    procedure SendOrderConfirmation(SalesOrderNo: Code[20]; WooOrderId: Text)
+    var
+        Email: Codeunit Email;
+        EmailMessage: Codeunit "Email Message";
+        Setup: Record "WooCommerce Setup";
+        Customer: Record Customer;
+        SalesHeader: Record "Sales Header";
+        EmailBody: Text;
+        RecipientEmail: Text;
+    begin
+        if not Setup.Get() then
+            exit;
+        if not SalesHeader.Get(SalesHeader."Document Type"::Order, SalesOrderNo) then
+            exit;
+
+        // Get customer email
+        if Customer.Get(SalesHeader."Sell-to Customer No.") then
+            RecipientEmail := Customer."E-Mail";
+
+        // Fallback to setup notification email
+        if RecipientEmail = '' then
+            RecipientEmail := Setup."Notification Email";
+
+        if RecipientEmail = '' then
+            exit;
+
+        EmailBody := '<h2>Order Confirmation</h2>';
+        EmailBody += '<p>Thank you for your order!</p>';
+        EmailBody += '<p><strong>Order No.:</strong> ' + SalesOrderNo + '</p>';
+        EmailBody += '<p><strong>WooCommerce Order No.:</strong> ' + WooOrderId + '</p>';
+        EmailBody += '<p>We will process your order shortly.</p>';
+        EmailBody += '<br><p>Best regards,<br>ERPProject Web Shop</p>';
+
+        EmailMessage.Create(
+            RecipientEmail,
+            'Order Confirmation - ' + SalesOrderNo,
+            EmailBody,
+            true);
+        Email.Send(EmailMessage);
     end;
 }
