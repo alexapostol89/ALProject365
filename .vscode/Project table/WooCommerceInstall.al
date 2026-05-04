@@ -28,7 +28,8 @@ codeunit 50107 WooCommerceInstall
         JobQueueEntry."Run on Fridays" := true;
         JobQueueEntry."Run on Saturdays" := true;
         JobQueueEntry."Run on Sundays" := true;
-        JobQueueEntry."Starting Time" := 020000T; // 2:00 AM daily
+        JobQueueEntry."Starting Time" := 020000T;
+        JobQueueEntry."No. of Minutes between Runs" := 1440; // 2:00 AM daily
         JobQueueEntry.Status := JobQueueEntry.Status::Ready;
         JobQueueEntry.Insert(true);
     end;
